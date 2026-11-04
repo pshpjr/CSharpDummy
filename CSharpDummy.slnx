@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CSharpDummy.Tests/CSharpDummy.Tests.csproj" />
+  <Project Path="CSharpDummy/CSharpDummy.csproj" />
+</Solution>
