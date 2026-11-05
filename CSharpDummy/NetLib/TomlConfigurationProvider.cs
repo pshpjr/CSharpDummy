@@ -33,7 +33,8 @@ public sealed class TomlConfigurationProvider : FileConfigurationProvider
 
                 foreach (var (k,v) in table)
                 {
-                    Flatten(data, $"{key}:{k}", v);
+                    var prefix = key.Length == 0 ? k : $"{key}:{k}";
+                    Flatten(data, prefix, v);
                 }
                 break;
             }
@@ -43,9 +44,9 @@ public sealed class TomlConfigurationProvider : FileConfigurationProvider
                 if (lstTable.Count == 0)
                     data.Add(key, null);
 
-                foreach (var table in lstTable)
+                foreach (var (index, table) in lstTable.Index())
                 {
-                    Flatten(data, $"{key}:{table.Count}", table);  
+                    Flatten(data, $"{key}:{index}", table);
                 }
                 break;
             }
