@@ -2,9 +2,9 @@ using CSharpDummy.NetLib;
 
 namespace CSharpDummy.Tests;
 
-public class CodexTests
+public class PacketCodecTests
 {
-    private const byte StaticKey = 50;
+    private const byte StaticKey = Header.StaticKey;
     private const byte RandomKey = 0x31;
     
     [Theory]
@@ -55,7 +55,7 @@ public class CodexTests
 //     [Fact]
 //     public void HeaderLayout()
 //     {
-//         Assert.Equal(5, Header.HeaderSize);
+//         Assert.Equal(5, Header.Size);
 //         Assert.Equal(4, Header.EncodeStartOffset);
 //     }
 //
@@ -82,7 +82,7 @@ public class CodexTests
 //     {
 //         var frame = (byte[])encoded.Clone();
 //
-//         PacketCodec.Decode(frame.AsSpan(Header.EncodeStartOffset), Span<byte>.Empty, StaticKey, RandomKey);
+//         PacketCodec.DeSerialize(frame.AsSpan(Header.EncodeStartOffset), Span<byte>.Empty, StaticKey, RandomKey);
 //
 //         Assert.Equal(MakePlainFrame(payload), frame);
 //     }
@@ -98,7 +98,7 @@ public class CodexTests
 //         for (int split = 0; split <= body.Length; split++)
 //         {
 //             var work = (byte[])body.Clone();
-//             PacketCodec.Decode(work.AsSpan(0, split), work.AsSpan(split), StaticKey, RandomKey);
+//             PacketCodec.DeSerialize(work.AsSpan(0, split), work.AsSpan(split), StaticKey, RandomKey);
 //             Assert.Equal(expected.AsSpan(Header.EncodeStartOffset).ToArray(), work);
 //         }
 //     }
@@ -110,21 +110,21 @@ public class CodexTests
 //     {
 //         var frame = (byte[])Frame2.Clone();
 //
-//         PacketCodec.Decode(frame.AsSpan(Header.EncodeStartOffset), Span<byte>.Empty, StaticKey + 1, RandomKey);
+//         PacketCodec.DeSerialize(frame.AsSpan(Header.EncodeStartOffset), Span<byte>.Empty, StaticKey + 1, RandomKey);
 //
 //         var checksum = frame[Header.EncodeStartOffset];
-//         var payload = frame.AsSpan(Header.HeaderSize);
+//         var payload = frame.AsSpan(Header.Size);
 //         Assert.NotEqual(checksum, PacketCodec.CalculateChecksum(payload));
 //     }
 //
 //     private static byte[] MakePlainFrame(byte[] payload)
 //     {
-//         var frame = new byte[Header.HeaderSize + payload.Length];
-//         frame[0] = Header.PacketCode;
+//         var frame = new byte[Header.Size + payload.Length];
+//         frame[0] = Header.StaticKey;
 //         BitConverter.TryWriteBytes(frame.AsSpan(1, 2), (ushort)payload.Length);
 //         frame[3] = RandomKey;
 //         frame[4] = PacketCodec.CalculateChecksum(payload);
-//         payload.CopyTo(frame, Header.HeaderSize);
+//         payload.CopyTo(frame, Header.Size);
 //         return frame;
 //     }
 //

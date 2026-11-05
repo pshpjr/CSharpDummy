@@ -10,7 +10,7 @@ public class SessionBuffer
 
     public int Count => (int)(_rear - _front);
     public int Capacity => _buffer.Length;
-    public Span<byte> WriteSpan => new Span<byte>(_buffer, _rear, Capacity - _rear);
+    public Memory<byte> WriteMemory => new Memory<byte>(_buffer, _rear, Capacity - _rear);
     public Span<byte> ReadSpan => new Span<byte>(_buffer, _front, Count);
 
     public SessionBuffer(int bufferSize)
@@ -36,16 +36,20 @@ public class SessionBuffer
         return true;
     }
     
-    //  남으면 복사하는 방식. 
-    //  구현 편의성을 위해 수신 데이터가 연속되어 있게 만듬
-    //  decode 시 편의성을 고려했고, 실제로 memcpy 성능 이슈가 측정되면 수정
     public bool Consume(int count)
     {
         if (count <= 0 || count > Count)
             return false;
 
         _front += count;
+        return true;
+    }
 
+    //  남으면 복사하는 방식. 
+    //  구현 편의성을 위해 수신 데이터가 연속되어 있게 만듬
+    //  decode 시 편의성을 고려했고, 실제로 memcpy 성능 이슈가 측정되면 수정
+    public void Compact()
+    {
         if (_front == _rear)
         {
             Clear();
@@ -59,8 +63,6 @@ public class SessionBuffer
             _front = 0;
             _rear = remaining;
         }
-        
-        return true;
     }
     
 

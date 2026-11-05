@@ -6,12 +6,14 @@ namespace CSharpDummy.NetLib;
 public struct Header
 {
     public const byte PacketCode = 0x77;
+    public const byte StaticKey = 50;
 
-    public static readonly int HeaderSize = Marshal.SizeOf<Header>();
+    public static readonly int Size = Marshal.SizeOf<Header>();
     public static readonly int EncodeStartOffset = (int)Marshal.OffsetOf<Header>(nameof(Checksum));
+    public static readonly int PayloadOffset = EncodeStartOffset + 1;
 
     public byte Code;
-    public ushort Len;
+    public ushort PayloadLen;
     public byte RandomKey;
     public byte Checksum;
 }
