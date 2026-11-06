@@ -13,8 +13,7 @@ class Program
             .AddTomlFile("DummySetting.toml")
             .AddEnvironmentVariables("DUMMY_")
             .Build();
-        
-        
+
         using var cts = new CancellationTokenSource();
 
         void SigHandler(PosixSignalContext signal)
@@ -26,18 +25,13 @@ class Program
         
         using var sigint =  PosixSignalRegistration.Create(PosixSignal.SIGINT, SigHandler);
         using var sigterm = PosixSignalRegistration.Create(PosixSignal.SIGTERM, SigHandler);
+
+        Dummy dummy = new Dummy(configuration);
         
-
-        Console.WriteLine("서버가 실행되었습니다!");
-
-        await Task.Delay(1000);
-        Console.WriteLine("서버가 종료되었습니다!");
+        await dummy.RunAsync(cts.Token);
+       
     }
-
-    class Session
-    {
-
-    }
+    
 
     
 }
